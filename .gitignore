@@ -1,0 +1,21 @@
+# VS Code transient files
+.vscode/*.browse.VC.db
+.vscode/*.browse.VC.db-shm
+.vscode/*.browse.VC.db-wal
+.vscode/*.opendb
+.vscode/ipch/
+
+# Build outputs
+.build/
+output/
+*.exe
+*.out
+*.o
+*.obj
+*.pdb
+*.ilk
+*.stackdump
+
+# OS files
+Thumbs.db
+.DS_Store
