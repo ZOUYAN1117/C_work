@@ -1,4 +1,6 @@
 {
+    "explorer.decorations.badges": false,
+    "explorer.decorations.colors": false,
     "files.exclude": {
         "**/.build": true,
         "**/*.exe": true,
