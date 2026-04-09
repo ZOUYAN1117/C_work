@@ -24,5 +24,12 @@
     "C_Cpp.default.intelliSenseMode": "windows-gcc-x64",
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "python-envs.pythonProjects": [
+        {
+            "path": ".",
+            "envManager": "ms-python.python:conda",
+            "packageManager": "ms-python.python:conda"
+        }
+    ]
 }
