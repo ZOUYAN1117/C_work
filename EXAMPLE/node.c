@@ -108,3 +108,20 @@ for (int i = 0; key[i] != '\0'; i++)
 {
     append_node(&list, &tail, key[i]);
 }
+
+struct node *delete_node(struct node *list, struct node *p)
+{
+    // 如果要删除的是头节点 (即第一个节点就是 p)
+    if (list == p)
+        return list->link; // 返回新的头节点
+    // 如果要删除的是中间节点或尾节点，需要找到 p 的前驱节点
+    struct node *prev = list;
+    while (prev->link != p)
+    {
+        prev = prev->link;
+    }
+    // 已经找到了 p 节点（即 prev->link == p），不用验证是否存在
+    prev->link = p->link; // 将 p 的前驱节点直接指向 p 的后一个节
+    // 返回原来的头节点
+    return list;
+}
