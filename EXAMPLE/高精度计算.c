@@ -1,9 +1,19 @@
+/**
+ * 文件: 高精度计算.c
+ * 描述: 高精度大数基本运算，包含支持正负结果的大数减法与生成任意位数的除法小数结果。
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-// 去除前导0（如果全为0则保留一个'0'）
-void remove_leading_zeros(char *str) {
+/**
+ * 辅助函数：清除大数字符串结果中的前导 0
+ * 参数：
+ * - str: 待处理的大数字符串首地址
+ * 返回值：无
+ */
+static void remove_leading_zeros(char *str) {
     int i = 0, p = 0;
     for (int j = 0; str[j] != '\0'; j++) {
         if (str[j] != '0' || p != 0) {
@@ -17,7 +27,13 @@ void remove_leading_zeros(char *str) {
     str[i] = '\0';
 }
 
-// 传入两个纯数字符串，计算减法结果并以动态分配的字符串返回
+/**
+ * 传入两个整型数字字符串，计算其减法差值结果 (str1 - str2)，并以动态分配的字符串返回
+ * 参数：
+ * - str1: 被减数字符串
+ * - str2: 减数字符串
+ * 返回值：指向动态分配的结果字符串的首地址指针；使用完毕后必须用 free() 释放内存
+ */
 char* subtract_strings(const char *str1, const char *str2) {
     char a[1000], b[1000];
     strcpy(a, str1);
@@ -32,7 +48,7 @@ char* subtract_strings(const char *str1, const char *str2) {
     // 分配结果内存：最大长度 + 符号位长度(1) + 终止符长度(1)
     int max_len = (lena > lenb ? lena : lenb) + 2;
     char *result = (char *)malloc(max_len);
-    if (!result) return NULL; // 内存分配失败保护
+    if (!result) return NULL; // 内存分配保护
 
     char *larger, *smaller;
     int is_negative = 0;
@@ -82,17 +98,41 @@ char* subtract_strings(const char *str1, const char *str2) {
     return result;
 }
 
-// ----- 测试用例 -----
-int main() {
-    char num1[100], num2[100];
-    if (scanf("%99s %99s", num1, num2) == 2) {
-        
-        char *res = subtract_strings(num1, num2);
-        
-        if (res) {
-            printf("结果为: %s\n", res);
-            free(res); // 用完后务必释放内存
+/**
+ * 高精度除法，计算 a / b 的商并保留输出 n 位小数结果 (带四舍五入进位)
+ * 参数：
+ * - a: 被除数 (long long)
+ * - b: 除数 (long long)
+ * - n: 需要保留的小数点后有效位数
+ * 返回值：无
+ */
+void high_precision_div(long long a, long long b, int n) {
+    long long *ans = calloc(n + 5, sizeof(long long));
+    if (!ans) return;
+    
+    // 模拟除法并记录每一位数值
+    ans[0] = a / b;
+    ans[1] = (a % b) * 10;
+    for (int i = 1; i <= n + 1; i++) {
+        ans[i + 1] = (ans[i] % b) * 10;
+        ans[i] = ans[i] / b;
+    }
+    
+    // 判断第 n+1 位的值是否需要进位并处理
+    if (ans[n + 1] >= 5) { // 四舍五入进位
+        ans[n] += 1;
+        for (int i = n; i > 0; i--) { // 对每一位小数进行进位处理
+            ans[i - 1] += ans[i] / 10; // 第 i 位满 10，第 i-1 位加一
+            ans[i] %= 10;              // 第 i 位进一后对 10 取模
         }
     }
-    return 0;
+    
+    // 输出整数部分与小数部分
+    printf("%lld.", ans[0]);
+    for (int i = 1; i <= n; i++) {
+        printf("%lld", ans[i]);
+    }
+    printf("\n");
+    
+    free(ans);
 }

@@ -1,21 +1,7 @@
-/*
- * 二叉树与树操作（第五次作业：树）
- *
- * 【功能清单】
- *   Part A 一般二叉树 BinNode
- *     btNewNode · btAttachLeft · btAttachRight
- *     btInorder · btPreorder · btPostorder
- *     btIsLeaf · btHeight · btCountLeaves · btDestroy
- *   Part B 二叉查找树 BstNode
- *     bstNewNode · bstInit · bstIsEmpty
- *     bstInsert · bstSearch · bstMinNode · bstMaxNode · bstDelete
- *     bstInorder · bstPreorder · bstPostorder
- *     bstHeight · bstCountLeaves · bstReportLeavesWithDepth · bstDestroy
- *   Part C 表达式树 EtNode
- *     etNewNum · etNewOp · etEval · etFree
- *
- * 用法：把需要的结构体和函数复制到你的 .c 文件里。
- * 约定：返回 1 表示“是/成功”，返回 0 表示“否/失败”（与 01~05 库相同）。
+/**
+ * 文件: 二叉树与树操作.c
+ * 描述: 包含一般二叉树 (BinNode)、二叉查找树 (BstNode) 及表达式树 (EtNode) 的操作。
+ *       涵盖树节点构建、关联孩子、多种遍历 (前中后序)、高度/叶子计算、查找、删除与求值。
  */
 
 #include <stdio.h>
@@ -23,18 +9,24 @@
 
 /* ==================== Part A：一般二叉树 ==================== */
 
+/**
+ * 结构体: BinNode - 一般二叉树节点结构定义
+ * 成员：
+ * - data: 存储结点的整型数值
+ * - left: 指向左孩子节点的指针
+ * - right: 指向右孩子节点的指针
+ */
 typedef struct BinNode {
     int data;
     struct BinNode *left;
     struct BinNode *right;
 } BinNode;
 
-/*
- * 功能：新建一个结点，左右孩子先为空
- * 返回：新结点指针；malloc 失败返回 NULL
- *
- * 使用示例：
- *   BinNode *a = btNewNode(1);
+/**
+ * 新建一个一般二叉树节点 (左右孩子置空)
+ * 参数：
+ * - data: 节点的整型数值
+ * 返回值：新建的节点指针；分配失败返回 NULL
  */
 BinNode *btNewNode(int data)
 {
@@ -47,41 +39,35 @@ BinNode *btNewNode(int data)
     return p;
 }
 
-/*
- * 功能：把 child 挂到 parent 的左边
- * 返回：无
- *
- * 使用示例：
- *   btAttachLeft(parent, child);
+/**
+ * 把 child 挂接为 parent 节点的左孩子
+ * 参数：
+ * - parent: 父节点指针
+ * - child: 子节点指针
+ * 返回值：无
  */
 void btAttachLeft(BinNode *parent, BinNode *child)
 {
     parent->left = child;
 }
 
-/*
- * 功能：把 child 挂到 parent 的右边
- * 返回：无
- *
- * 使用示例：
- *   btAttachRight(parent, child);
+/**
+ * 把 child 挂接为 parent 节点的右孩子
+ * 参数：
+ * - parent: 父节点指针
+ * - child: 子节点指针
+ * 返回值：无
  */
 void btAttachRight(BinNode *parent, BinNode *child)
 {
     parent->right = child;
 }
 
-/*
- * 功能：中序遍历（左-根-右），用 printf 输出
- * 返回：无
- *
- * 使用示例（先建好树再遍历，下同）：
- *   BinNode *r = btNewNode(1);
- *   BinNode *a = btNewNode(2), *b = btNewNode(3);
- *   BinNode *c = btNewNode(4), *d = btNewNode(5);
- *   btAttachLeft(r, a);  btAttachRight(r, b);
- *   btAttachLeft(a, c);  btAttachRight(a, d);
- *   btInorder(r);        输出：4 2 5 1 3
+/**
+ * 中序遍历一般二叉树 (左-根-右，空格分隔打印)
+ * 参数：
+ * - root: 二叉树根指针
+ * 返回值：无
  */
 void btInorder(BinNode *root)
 {
@@ -92,12 +78,11 @@ void btInorder(BinNode *root)
     btInorder(root->right);
 }
 
-/*
- * 功能：先序遍历（根-左-右），用 printf 输出
- * 返回：无
- *
- * 使用示例：
- *   btPreorder(r);       输出：1 2 4 5 3
+/**
+ * 先序遍历一般二叉树 (根-左-右，空格分隔打印)
+ * 参数：
+ * - root: 二叉树根指针
+ * 返回值：无
  */
 void btPreorder(BinNode *root)
 {
@@ -108,12 +93,11 @@ void btPreorder(BinNode *root)
     btPreorder(root->right);
 }
 
-/*
- * 功能：后序遍历（左-右-根），用 printf 输出
- * 返回：无
- *
- * 使用示例：
- *   btPostorder(r);      输出：4 5 2 3 1
+/**
+ * 后序遍历一般二叉树 (左-右-根，空格分隔打印)
+ * 参数：
+ * - root: 二叉树根指针
+ * 返回值：无
  */
 void btPostorder(BinNode *root)
 {
@@ -124,12 +108,11 @@ void btPostorder(BinNode *root)
     printf("%d ", root->data);
 }
 
-/*
- * 功能：判断结点是否为叶子（无左右孩子）
- * 返回：1 是叶子，0 否（p 为 NULL 时返回 0）
- *
- * 使用示例：
- *   if (btIsLeaf(p)) printf("是叶子\n");
+/**
+ * 判断指定节点是否为叶子节点 (无左右孩子)
+ * 参数：
+ * - p: 指定节点指针
+ * 返回值：1 表示为叶子节点，0 表示非叶子节点 (p 为 NULL 时也返回 0)
  */
 int btIsLeaf(const BinNode *p)
 {
@@ -140,12 +123,11 @@ int btIsLeaf(const BinNode *p)
     return 0;
 }
 
-/*
- * 功能：求树的高度
- * 返回：空树 0，只有根为 1
- *
- * 使用示例：
- *   int h = btHeight(r);
+/**
+ * 计算一般二叉树的高度 (空树为 0，仅含根为 1)
+ * 参数：
+ * - root: 二叉树根指针
+ * 返回值：树的高度
  */
 int btHeight(const BinNode *root)
 {
@@ -160,12 +142,11 @@ int btHeight(const BinNode *root)
     return hr + 1;
 }
 
-/*
- * 功能：统计叶子结点个数
- * 返回：叶子个数
- *
- * 使用示例：
- *   int n = btCountLeaves(r);
+/**
+ * 统计一般二叉树的叶子节点个数
+ * 参数：
+ * - root: 二叉树根指针
+ * 返回值：叶子节点个数
  */
 int btCountLeaves(const BinNode *root)
 {
@@ -176,13 +157,11 @@ int btCountLeaves(const BinNode *root)
     return btCountLeaves(root->left) + btCountLeaves(root->right);
 }
 
-/*
- * 功能：释放整棵树（后序释放）
- * 返回：无
- *
- * 使用示例：
- *   btDestroy(r);
- *   r = NULL;
+/**
+ * 销毁二叉树并释放其所有节点的内存 (后序遍历释放)
+ * 参数：
+ * - root: 二叉树根指针
+ * 返回值：无
  */
 void btDestroy(BinNode *root)
 {
@@ -195,18 +174,24 @@ void btDestroy(BinNode *root)
 
 /* ==================== Part B：二叉查找树（BST） ==================== */
 
+/**
+ * 结构体: BstNode - 二叉查找树节点结构定义
+ * 成员：
+ * - data: 存储结点的整型数值
+ * - left: 指向左子树根节点的指针
+ * - right: 指向右子树根节点的指针
+ */
 typedef struct BstNode {
     int data;
     struct BstNode *left;
     struct BstNode *right;
 } BstNode;
 
-/*
- * 功能：新建 BST 结点（一般由 bstInsert 内部调用）
- * 返回：新结点指针；malloc 失败返回 NULL
- *
- * 使用示例：
- *   BstNode *p = bstNewNode(50);
+/**
+ * 新建一个二叉查找树节点
+ * 参数：
+ * - data: 节点存储的整型数值
+ * 返回值：新建节点指针；分配失败返回 NULL
  */
 BstNode *bstNewNode(int data)
 {
@@ -219,59 +204,34 @@ BstNode *bstNewNode(int data)
     return p;
 }
 
-/*
- * 功能：把根指针置为空树
- * 返回：无
- *
- * 使用示例：
- *   BstNode *root = NULL;
- *   bstInit(&root);
+/**
+ * 初始化二叉查找树为一棵空树
+ * 参数：
+ * - root: 指向查找树根指针的指针地址
+ * 返回值：无
  */
 void bstInit(BstNode **root)
 {
     *root = NULL;
 }
 
-/*
- * 功能：判断 BST 是否为空
- * 返回：1 空，0 非空
- *
- * 使用示例：
- *   if (bstIsEmpty(root)) printf("空树\n");
+/**
+ * 判断二叉查找树是否为空
+ * 参数：
+ * - root: 查找树根指针
+ * 返回值：1 为空，0 非空
  */
 int bstIsEmpty(const BstNode *root)
 {
     return root == NULL;
 }
 
-/*
- * 功能：按 BST 规则插入（小放左，大放右，相等放右）
- * 返回：插入后的根指针（可能变）
- *
- * 使用示例：
- *   BstNode *root = NULL;
- *   bstInit(&root);
- *   root = bstInsert(root, 50);
- *   root = bstInsert(root, 30);
- *   root = bstInsert(root, 70);
- *   root = bstInsert(root, 20);
- *   root = bstInsert(root, 40);
- *   root = bstInsert(root, 60);
- *   root = bstInsert(root, 80);
- *   root = bstInsert(root, 10);
- *   root = bstInsert(root, 25);
- *   root = bstInsert(root, 35);
- *   root = bstInsert(root, 45);
- *   root = bstInsert(root, 55);
- *
- *   按上述顺序插入后的树形（高度 4，叶子 6 个）：
- *                    50
- *                   /  \
- *                 30    70
- *                /  \   / \
- *              20   40 60  80
- *             / \  / \   \
- *           10 25 35 45  55
+/**
+ * 按照 BST 插入规则插入新节点 (小放左，大或相等放右)
+ * 参数：
+ * - root: 查找树根指针
+ * - data: 待插入的数据值
+ * 返回值：指向插入新节点后的查找树根指针
  */
 BstNode *bstInsert(BstNode *root, int data)
 {
@@ -284,12 +244,12 @@ BstNode *bstInsert(BstNode *root, int data)
     return root;
 }
 
-/*
- * 功能：在 BST 中查找 data
- * 返回：1 找到，0 未找到
- *
- * 使用示例：
- *   if (bstSearch(root, 40)) printf("找到了\n");
+/**
+ * 在二叉查找树中检索指定数据是否存在
+ * 参数：
+ * - root: 查找树根指针
+ * - data: 待检索的数值
+ * 返回值：1 存在，0 不存在
  */
 int bstSearch(const BstNode *root, int data)
 {
@@ -302,13 +262,11 @@ int bstSearch(const BstNode *root, int data)
     return bstSearch(root->right, data);
 }
 
-/*
- * 功能：找最小结点（最左下）
- * 返回：最小结点指针；空树返回 NULL
- *
- * 使用示例：
- *   BstNode *minp = bstMinNode(root);
- *   if (minp) printf("%d\n", minp->data);
+/**
+ * 寻找二叉查找树中的最小节点 (最左下的叶子或半叶子节点)
+ * 参数：
+ * - root: 查找树根指针
+ * 返回值：最小节点指针；若为空树则返回 NULL
  */
 BstNode *bstMinNode(BstNode *root)
 {
@@ -317,12 +275,11 @@ BstNode *bstMinNode(BstNode *root)
     return root;
 }
 
-/*
- * 功能：找最大结点（最右下）
- * 返回：最大结点指针；空树返回 NULL
- *
- * 使用示例：
- *   BstNode *maxp = bstMaxNode(root);
+/**
+ * 寻找二叉查找树中的最大节点 (最右下的叶子或半叶子节点)
+ * 参数：
+ * - root: 查找树根指针
+ * 返回值：最大节点指针；若为空树则返回 NULL
  */
 BstNode *bstMaxNode(BstNode *root)
 {
@@ -331,12 +288,12 @@ BstNode *bstMaxNode(BstNode *root)
     return root;
 }
 
-/*
- * 功能：删除值为 data 的结点
- * 返回：删除后的根指针
- *
- * 使用示例：
- *   root = bstDelete(root, 30);
+/**
+ * 删除二叉查找树中值为 data 的节点，并维护查找树特性
+ * 参数：
+ * - root: 查找树根指针
+ * - data: 待删除的整型数值
+ * 返回值：指向删除后查找树的根指针
  */
 BstNode *bstDelete(BstNode *root, int data)
 {
@@ -344,6 +301,8 @@ BstNode *bstDelete(BstNode *root, int data)
 
     if (root == NULL)
         return NULL;
+    
+    // 按值导航到指定结点
     if (data < root->data) {
         root->left = bstDelete(root->left, data);
         return root;
@@ -352,29 +311,32 @@ BstNode *bstDelete(BstNode *root, int data)
         root->right = bstDelete(root->right, data);
         return root;
     }
+    
+    // 找到了待删除节点，进行摘除
+    // 情况 1: 左子树为空
     if (root->left == NULL) {
         BstNode *r = root->right;
         free(root);
         return r;
     }
+    // 情况 2: 右子树为空
     if (root->right == NULL) {
         BstNode *r = root->left;
         free(root);
         return r;
     }
+    // 情况 3: 左右子树均不为空，寻找右子树最小值替代它，然后递归删除该最小值
     m = bstMinNode(root->right);
     root->data = m->data;
     root->right = bstDelete(root->right, m->data);
     return root;
 }
 
-/*
- * 功能：中序遍历 BST，用 printf 输出
- * 返回：无
- *
- * 使用示例（用 bstInsert 示例中的插入序列建好 root）：
- *   bstInorder(root);
- *   输出：10 20 25 30 35 40 45 50 55 60 70 80
+/**
+ * 中序遍历二叉查找树 (有序输出)
+ * 参数：
+ * - root: 查找树根指针
+ * 返回值：无
  */
 void bstInorder(BstNode *root)
 {
@@ -385,13 +347,11 @@ void bstInorder(BstNode *root)
     bstInorder(root->right);
 }
 
-/*
- * 功能：先序遍历 BST，用 printf 输出
- * 返回：无
- *
- * 使用示例：
- *   bstPreorder(root);
- *   输出：50 30 20 10 25 40 35 45 70 60 55 80
+/**
+ * 先序遍历二叉查找树
+ * 参数：
+ * - root: 查找树根指针
+ * 返回值：无
  */
 void bstPreorder(BstNode *root)
 {
@@ -402,13 +362,11 @@ void bstPreorder(BstNode *root)
     bstPreorder(root->right);
 }
 
-/*
- * 功能：后序遍历 BST，用 printf 输出
- * 返回：无
- *
- * 使用示例：
- *   bstPostorder(root);
- *   输出：10 25 20 35 45 40 30 55 60 80 70 50
+/**
+ * 后序遍历二叉查找树
+ * 参数：
+ * - root: 查找树根指针
+ * 返回值：无
  */
 void bstPostorder(BstNode *root)
 {
@@ -419,12 +377,11 @@ void bstPostorder(BstNode *root)
     printf("%d ", root->data);
 }
 
-/*
- * 功能：求 BST 高度
- * 返回：空树 0，只有根为 1
- *
- * 使用示例：
- *   int h = bstHeight(root);
+/**
+ * 计算二叉查找树的高度
+ * 参数：
+ * - root: 查找树根指针
+ * 返回值：高度
  */
 int bstHeight(const BstNode *root)
 {
@@ -439,12 +396,11 @@ int bstHeight(const BstNode *root)
     return hr + 1;
 }
 
-/*
- * 功能：统计 BST 叶子个数
- * 返回：叶子个数
- *
- * 使用示例：
- *   int n = bstCountLeaves(root);
+/**
+ * 统计二叉查找树的叶子结点个数
+ * 参数：
+ * - root: 查找树根指针
+ * 返回值：叶子个数
  */
 int bstCountLeaves(const BstNode *root)
 {
@@ -455,12 +411,12 @@ int bstCountLeaves(const BstNode *root)
     return bstCountLeaves(root->left) + bstCountLeaves(root->right);
 }
 
-/*
- * 功能：输出每个叶子的“值 深度”（根深度为 1），每行一个
- * 返回：无
- *
- * 使用示例：
- *   bstReportLeavesWithDepth(root, 1);
+/**
+ * 深度优先输出查找树中的每个叶子节点的值与其对应深度 (根深度为 1)
+ * 参数：
+ * - root: 查找树根指针
+ * - depth: 当前节点所在深度层级
+ * 返回值：无
  */
 void bstReportLeavesWithDepth(BstNode *root, int depth)
 {
@@ -472,13 +428,11 @@ void bstReportLeavesWithDepth(BstNode *root, int depth)
     bstReportLeavesWithDepth(root->right, depth + 1);
 }
 
-/*
- * 功能：释放整棵 BST
- * 返回：无
- *
- * 使用示例：
- *   bstDestroy(root);
- *   root = NULL;
+/**
+ * 销毁整个二叉查找树，释放内存
+ * 参数：
+ * - root: 查找树根指针
+ * 返回值：无
  */
 void bstDestroy(BstNode *root)
 {
@@ -491,6 +445,15 @@ void bstDestroy(BstNode *root)
 
 /* ==================== Part C：表达式树 ==================== */
 
+/**
+ * 结构体: EtNode - 表达式二叉树节点结构定义
+ * 成员：
+ * - isOp: 1 表示该节点为运算符，0 表示为数值操作数
+ * - value: 当 isOp 为 0 时，存储其整型数值
+ * - op: 当 isOp 为 1 时，存储其字符运算符 (如 '+', '-', '*', '/')
+ * - left: 指向左子树 (运算数或子表达式) 的指针
+ * - right: 指向右子树 (运算数或子表达式) 的指针
+ */
 typedef struct EtNode {
     int isOp;
     int value;
@@ -499,12 +462,11 @@ typedef struct EtNode {
     struct EtNode *right;
 } EtNode;
 
-/*
- * 功能：新建数字叶子结点
- * 返回：新结点指针
- *
- * 使用示例：
- *   EtNode *n = etNewNum(3);
+/**
+ * 新建一个数值操作数叶子节点
+ * 参数：
+ * - v: 节点整型数值
+ * 返回值：新建表达式树节点指针
  */
 EtNode *etNewNum(int v)
 {
@@ -517,12 +479,13 @@ EtNode *etNewNum(int v)
     return p;
 }
 
-/*
- * 功能：新建运算符结点，左右子树为 l、r
- * 返回：新结点指针
- *
- * 使用示例：
- *   EtNode *t = etNewOp('+', etNewNum(2), etNewNum(3));
+/**
+ * 新建一个运算符节点，并将左右子树关联为子表达式
+ * 参数：
+ * - op: 字符型运算符 ('+', '-', '*', '/')
+ * - l: 左子树节点指针
+ * - r: 右子树节点指针
+ * 返回值：新建的运算符节点指针
  */
 EtNode *etNewOp(char op, EtNode *l, EtNode *r)
 {
@@ -535,22 +498,25 @@ EtNode *etNewOp(char op, EtNode *l, EtNode *r)
     return p;
 }
 
-/*
- * 功能：后序求值（支持 + - * /，除法为整除）
- * 返回：表达式的值
- *
- * 使用示例：
- *   EtNode *t = etNewOp('+', etNewNum(2), etNewOp('*', etNewNum(3), etNewNum(4)));
- *   int v = etEval(t);   v 为 14
+/**
+ * 后续遍历递归求解表达式树的代数计算数值 (除法按 C 整除计算)
+ * 参数：
+ * - root: 表达式树根节点指针
+ * 返回值：计算最终得到的数值结果
  */
 int etEval(EtNode *root)
 {
     int a, b;
 
+    // 叶子节点直接返回数据值
     if (root->isOp == 0)
         return root->value;
+    
+    // 分别计算左右子表达式的值
     a = etEval(root->left);
     b = etEval(root->right);
+    
+    // 执行运算
     if (root->op == '+')
         return a + b;
     if (root->op == '-')
@@ -562,13 +528,11 @@ int etEval(EtNode *root)
     return 0;
 }
 
-/*
- * 功能：释放表达式树
- * 返回：无
- *
- * 使用示例：
- *   etFree(t);
- *   t = NULL;
+/**
+ * 释放整棵表达式树的内存空间
+ * 参数：
+ * - root: 表达式树根节点指针
+ * 返回值：无
  */
 void etFree(EtNode *root)
 {
