@@ -13,9 +13,10 @@
  */
 #define STACK_MAX 100
 
-typedef struct {
+typedef struct
+{
     int data[STACK_MAX];
-    int top;           /* 栈顶下一个空闲位置；0 表示空栈 */
+    int top; /* 栈顶下一个空闲位置；0 表示空栈 */
 } IntStack;
 
 /**
@@ -85,7 +86,7 @@ int stackPush(IntStack *s, int x)
     // 判断是否栈满
     if (s->top >= STACK_MAX)
         return 0;
-    
+
     // 在当前空闲位置填值，并递增指针
     s->data[s->top] = x;
     s->top++;
@@ -104,7 +105,7 @@ int stackPop(IntStack *s, int *out)
     // 判断是否栈空
     if (s->top == 0)
         return 0;
-    
+
     // 递减指针，并在需要时传回该位置数据值
     s->top--;
     if (out != NULL)
@@ -124,7 +125,7 @@ int stackPeek(const IntStack *s, int *out)
     // 判断是否栈空
     if (s->top == 0)
         return 0;
-    
+
     // 获取当前栈顶元素 (位于 top - 1 处)
     if (out != NULL)
         *out = s->data[s->top - 1];
@@ -142,7 +143,8 @@ void stackPrint(const IntStack *s)
     int i;
 
     // 顺序打印静态数组中的元素
-    for (i = 0; i < s->top; i++) {
+    for (i = 0; i < s->top; i++)
+    {
         printf("%d", s->data[i]);
         if (i < s->top - 1)
             printf(" ");
